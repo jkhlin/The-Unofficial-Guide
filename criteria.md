@@ -25,7 +25,7 @@ contains the answer.
 **Why this target:**
 <!-- e.g. "One of my questions is about a topic only two documents mention, so
      I expect that one to be hard." -->
-
+Accuracy matters in this case I am expecting a 80%+ average answer.
 ---
 
 ## 2. Every answer names a source
@@ -35,7 +35,9 @@ Every answer the system produces names at least one source document.
 **Why this target:**
 <!-- Why all five and not four? What about your setup makes that achievable —
      or what would have to go wrong for it not to be? -->
-
+Some questions don't need to involve a document such as it could be based
+on inference and context on other documents to give the most relevant
+answer.
 ---
 
 ## 3. The relevance gate stops out-of-corpus questions
@@ -52,12 +54,15 @@ in at least 4 of 5 tries.
 **Why this target:**
 <!-- What did your distances look like when you set the cutoff in Milestone 4?
      Was there a clean gap, or did the two groups overlap? -->
-
+It is important for the response to not be misleading or hallucinating.
+Giving an incorrect answer is worse than not having misleading answer.
 ---
 
 ## 4. Something about your chunks
 
-<!-- YOU WRITE THIS ONE.
+Make sure the content is relevant to the question asked by having relevant 
+keywords for all 5 queries by parsing and recognizing the labels and then 
+splitting them
 
      How would you know if your chunks were the right size? Name something
      countable or observable.
@@ -72,13 +77,16 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+If there is a slight error in terms of not getting the relevant information
+that means it's hard to determine whether the chunk sizing is accurate. 
+Sincecity_guides has a wide range of labelled sections so depending on the 
+question some chunks need to be less relevant and some need to be more
 
 
 ---
 
 ## 5. Your choice
-
+Having a wrong city or location listed in at least one response.
 <!-- YOU WRITE THIS ONE TOO.
 
      Pick something you actually care about getting right. It could be about
@@ -90,7 +98,10 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+Having a wrong city or location that is not relevant in the corpus
+means it is just either coming up with a random area on the
+documents. No matter how correct it sounds it is misleading
+information.
 
 
 ---
