@@ -100,12 +100,17 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question: ** How is the workload in CS 340?
 
-**Answer:**
+**Answer:** 
 
-```
-```
+(best distance 0.255, cutoff 0.6)
+
+The workload for CS 340 is 6 hours a week early on, increasing to 15 hours a week in the last three weeks when the project lands, and it is front-loaded sothe first month is heavier than the rest. 
+
+Source: `course_cs_340_workload.txt`
+
+Sources retrieved: course_cs_210_workload.txt, course_cs_340_workload.txt, course_stat_150_workload.txt
 
 **My relevance cutoff:**
 
@@ -121,6 +126,8 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 | Question | In corpus? | Best distance |
 |---|---|---|
 |  |  |  |
+
+I compared the best retrieval distance for questions that my corpus covers with questions that are clearly outside the corpus. The in-corpus questions I tested had best distances between about 0.25 and 0.56, while the out-of-scope questions had best distances between about 0.82 and 0.93. Since there was a large gap between the highest relevant distance and the lowest out-of-scope distance, I chose a cutoff of 0.69, near the middle of that gap.
 
 ## How I Used AI
 
