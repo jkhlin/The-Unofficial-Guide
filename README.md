@@ -108,8 +108,17 @@ Sources retrieved: course_cs_210_workload.txt, course_cs_340_workload.txt, cours
      Milestone 4. -->
 
 | Question | In corpus? | Best distance |
-|---|---|---|
-|  |  |  |
+|---|---|---:|
+| How is the workload in CS 340? | Yes | 0.2547 |
+| When does study abroad programs start? | Yes | 0.3165 |
+| What is Innisfree Hall condition like? | Yes | 0.4858 |
+| How many on campus jobs are there? | Yes | 0.4956 |
+| What food does The Atrium have? | Yes | 0.5615 |
+| What is the capital of Mongolia? | No | 0.8246 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.8442 |
+| Who won the 1994 World Cup? | No | 0.8859 |
+| How do I write a for loop in Rust? | No | 0.8960 |
+| How do I change the oil in a diesel engine? | No | 0.9340 |
 
 I compared the best retrieval distance for questions that my corpus covers with questions that are clearly outside the corpus. The in-corpus questions I tested had best distances between about 0.25 and 0.56, while the out-of-scope questions had best distances between about 0.82 and 0.93. Since there was a large gap between the highest relevant distance and the lowest out-of-scope distance, I chose a cutoff of 0.69, near the middle of that gap.
 
