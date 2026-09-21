@@ -1,6 +1,6 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+Jason Lin Campus_Life corpus
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -21,11 +21,7 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+The Unofficial Guide is a RAG system that answers questions using the campus_life corpus. The documents contain student-focused information about topics such as housing, dining, courses, campus jobs, and university services. The system splits the documents into chunks, creates embeddings for them, and retrieves the most relevant chunks for a user's question. It then generates an answer using only the retrieved information and refuses questions that are too far outside the corpus.
 
 ## Chunking Strategy
 
@@ -140,9 +136,9 @@ I compared the best retrieval distance for questions that my corpus covers with 
 
      Milestone 5. -->
 
-**1.**
+**1.** One way I used AI was while designing my chunking strategy. I showed the AI examples from my corpus and asked how I could improve the starter's fixed 800-character chunker. It suggested splitting around paragraph boundaries and keeping short headings attached to their content. The first version was more complicated than I wanted, so I simplified it while keeping the main idea of preserving complete thoughts instead of cutting text at arbitrary character positions.
 
-**2.**
+**2.** I also used AI while tuning retrieval in Milestone 4. I gave it the distance scores from my in-corpus and out-of-scope questions and asked how to interpret them. It pointed out the gap between my highest in-corpus distance, about 0.56, and my lowest out-of-scope distance, about 0.82. I used that observation to choose a relevance cutoff of 0.69. I also changed top-k from 5 to 3 after looking at my retrieval results because the useful chunks were usually already among the first few results and later results were often less relevant.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
