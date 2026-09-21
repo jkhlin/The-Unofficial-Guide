@@ -2,19 +2,6 @@
 
 Jason Lin Campus_Life corpus
 
-> **This file is your submission.** Fill it in as you go — most sections get
-> written during the milestone that produces them, not at the end.
->
-> How the starter works, and every command you'll need, is in `RUNNING.md`.
-> Leave that file alone.
->
-> **Paste everything as text.** No screenshots, no video. A typed table gets
-> full credit; a picture of the same table gets none.
->
-> Delete these instruction blocks as you replace them. The `<!-- -->` comments
-> are notes to you and don't show up when the page renders — you can leave them
-> or remove them.
-
 ---
 
 # Unit 1
@@ -25,8 +12,9 @@ The Unofficial Guide is a RAG system that answers questions using the campus_lif
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** Up to 700 characters. I originally used the starter's fixed 800-character chunks, but my campus_life documents are mostly short posts with natural paragraph boundaries. Many of the documents already contain one focused topic, so cutting them at an arbitrary character count could split a complete thought unnecessarily. I changed the chunker to split around paragraphs and combine related short paragraphs up to about 700 characters.
+
+**Overlap:** 0 characters. I used no overlap because the chunks are split at natural paragraph boundaries instead of in the middle of sentences. This lets the chunks keep their context without repeating text between neighboring chunks. After re-indexing, the corpus produced 88 chunks from 88 documents, with chunk lengths ranging from 178 to 549 characters.
 
 <!-- What about YOUR documents made you pick these numbers? Short posts and
      long sectioned guides don't want the same chunking, and "800 seemed
@@ -108,7 +96,7 @@ Source: `course_cs_340_workload.txt`
 
 Sources retrieved: course_cs_210_workload.txt, course_cs_340_workload.txt, course_stat_150_workload.txt
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.69
 
 <!-- The number you set in config.py, and how you got there.
 
