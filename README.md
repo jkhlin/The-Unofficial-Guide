@@ -88,7 +88,7 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 
 **Answer:** 
 
-(best distance 0.255, cutoff 0.6)
+(best distance 0.255, cutoff 0.69)
 
 The workload for CS 340 is 6 hours a week early on, increasing to 15 hours a week in the last three weeks when the project lands, and it is front-loaded sothe first month is heavier than the rest. 
 
