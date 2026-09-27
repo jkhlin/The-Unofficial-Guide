@@ -137,6 +137,12 @@ I compared the best retrieval distance for questions that my corpus covers with 
 
 **2.** I also used AI while tuning retrieval in Milestone 4. I gave it the distance scores from my in-corpus and out-of-scope questions and asked how to interpret them. It pointed out the gap between my highest in-corpus distance, about 0.56, and my lowest out-of-scope distance, about 0.82. I used that observation to choose a relevance cutoff of 0.69. I also changed top-k from 5 to 3 after looking at my retrieval results because the useful chunks were usually already among the first few results and later results were often less relevant.
 
+**3.** I used AI while analyzing the results from `run_eval.py`. I showed it the before-run output and the generated answers and asked it to help identify patterns in the failures. This helped me separate two different issues: several question-level failures were caused by my exact-string scorer, while the campus-jobs question exposed a real retrieval limitation because the retrieved chunks did not contain the requested count.
+
+**4.** I also used AI while deciding on an improvement for Milestone 4. Based on the retrieval failure, I asked about hybrid search and used the response to help understand how BM25 could be combined with semantic retrieval. I then implemented hybrid retrieval and reran the full evaluation.
+
+**5.** After the after-run, I used AI again to compare the before and after results. The comparison showed that hybrid search changed some of the secondary retrieved documents, but the criterion-level scores stayed the same and the campus-jobs question was still not answered.
+
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
      claims earns nothing.
@@ -402,9 +408,30 @@ Therefore, hybrid search did not measurably improve the system on this test set.
 
      Milestone 5. -->
 
+Criterion 5 is still missed after the improvement.
+
+The original criterion says that at least one response should contain a wrong city or location. In both the before and after runs, none of the responses introduced a wrong city or location, so the criterion remained `MISSED` as written.
+
+The problem is with the wording of the criterion rather than the system behavior. The system avoiding unsupported locations is actually the behavior I want. If I continued working on this project, I would revise the criterion so that it measures whether the system avoids introducing unsupported cities or locations.
+
+I would change it to something like:
+
+`None of the 5 test-question responses should introduce a city or location that is not supported by the retrieved documents.`
+
+I stopped here because the assignment only requires one measured improvement, and my Milestone 4 change focused on the retrieval weakness identified in the campus-jobs question.
+
+The campus-jobs question also remains a limitation even though Criterion 1 still technically passes at `4/5`. The system continues to retrieve documents related to campus jobs without retrieving the specific count needed to answer `How many on campus jobs are there?`
+
+If I continued improving the system, I would inspect the underlying corpus to confirm whether the number `2` is actually present in a chunk. If it is present, I would further tune retrieval to make that chunk rank higher. If the information is not present in the corpus, retrieval cannot solve the problem and the corpus itself would need to include that fact.
+
+
 ## What I'd Do Differently
 
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
 
      Milestone 5. -->
+
+If I wrote the acceptance criteria again, I would change Criterion 5 because its wording accidentally treats a wrong location as a successful result. I intended to measure the opposite: whether the system avoids introducing locations that are unsupported by the retrieved documents.
+
+I would also consider making Criterion 1 stricter. The original target was `4 of 5`, which the system met in every run, but the same campus-jobs question failed consistently. A `5 of 5` target would have made that retrieval weakness more visible.
