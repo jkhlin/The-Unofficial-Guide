@@ -18,6 +18,7 @@ rest of the project if they were wrong:
 """
 
 import os
+import re
 import shutil
 from dataclasses import dataclass
 
@@ -28,6 +29,7 @@ from dataclasses import dataclass
 os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
 
 import chromadb  # noqa: E402
+from rank_bm25 import BM25Okapi  # noqa: E402
 
 import config
 from chunker import Chunk
@@ -134,6 +136,49 @@ def _client():
     )
 
 
+# ─── BM25 keyword search ─────────────────────────────────────────────────────
+#
+# Semantic search alone missed the campus-jobs question (Milestone 3 diagnosis):
+# it found chunks about the right topic but not the one with the exact figure,
+# because "how many" doesn't mean anything semantically. BM25 finds documents
+# by exact word overlap, so it can pull that chunk up even when its meaning
+# doesn't stand out. `search` below fuses both rankings by reciprocal rank
+# fusion (RRF) — the standard way to combine two differently-scaled rankings
+# without inventing a weight to tune.
+
+_bm25_cache: dict[str, tuple[BM25Okapi, list[str]]] = {}
+
+RRF_K = 60  # standard RRF constant (Cormack et al., 2009), not something to tune here
+
+# Standard BM25 practice, not a tunable: without this, short documents in a
+# small corpus match on shared function words (the, when, does, ...) as
+# readily as on the words that actually carry the question's meaning.
+_STOPWORDS = frozenset(
+    "a an and are as at be by does do for from had has have how if in into is "
+    "it its of on or that the their there these this to was were what when "
+    "where which who will with your you".split()
+)
+
+
+def _tokenize(text: str) -> list[str]:
+    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t not in _STOPWORDS]
+
+
+def _bm25_index(collection, name: str) -> tuple[BM25Okapi, list[str]]:
+    """Build (and cache) a BM25 index over every chunk in a collection."""
+    cached = _bm25_cache.get(name)
+    if cached is not None:
+        return cached
+
+    data = collection.get(include=["documents"])
+    ids = data["ids"]
+    tokenized = [_tokenize(doc) for doc in data["documents"]]
+    bm25 = BM25Okapi(tokenized) if tokenized else None
+
+    _bm25_cache[name] = (bm25, ids)
+    return _bm25_cache[name]
+
+
 def build_index(
     chunks: list[Chunk],
     corpus: str | None = None,
@@ -149,6 +194,7 @@ def build_index(
     """
     name = config.collection_name(corpus, variant)
     client = _client()
+    _bm25_cache.pop(name, None)
 
     try:
         client.delete_collection(name)
@@ -185,9 +231,17 @@ def search(
     variant: str = "default",
 ) -> list[Result]:
     """
-    Retrieve the chunks closest in meaning to a question.
+    Retrieve the chunks most relevant to a question, by hybrid search.
 
-    Returns them nearest-first, each with its distance.
+    Combines the existing semantic/embedding ranking with a BM25 keyword
+    ranking over the same collection, fused by reciprocal rank fusion, and
+    returns the top_k fused results, nearest-first.
+
+    `Result.distance` is still the real Chroma cosine distance for that chunk
+    — BM25 only influences which chunks make the cut and their order, it does
+    not change what the number in `distance` means. That's what keeps the
+    relevance gate's threshold (config.THRESHOLD) calibrated the same way it
+    was under semantic-only search.
     """
     top_k = top_k or config.TOP_K
     name = config.collection_name(corpus, variant)
@@ -199,21 +253,52 @@ def search(
             f"No index called '{name}'. Run `python app.py index` first."
         ) from exc
 
+    count = collection.count()
+    if count == 0:
+        return []
+
+    # Query the whole collection, not just top_k, so every chunk has a
+    # semantic rank and distance to fuse with its BM25 rank.
     raw = collection.query(
         query_embeddings=embed([question]),
-        n_results=min(top_k, collection.count()),
+        n_results=count,
     )
 
-    results: list[Result] = []
-    for text, meta, distance in zip(
-        raw["documents"][0], raw["metadatas"][0], raw["distances"][0]
+    by_id: dict[str, dict] = {}
+    semantic_rank: dict[str, int] = {}
+    for rank, (doc_id, text, meta, distance) in enumerate(
+        zip(raw["ids"][0], raw["documents"][0], raw["metadatas"][0], raw["distances"][0])
     ):
+        by_id[doc_id] = {"text": text, "meta": meta, "distance": float(distance)}
+        semantic_rank[doc_id] = rank
+
+    bm25, bm25_ids = _bm25_index(collection, name)
+    bm25_rank: dict[str, int] = {}
+    if bm25 is not None:
+        scores = bm25.get_scores(_tokenize(question))
+        order = sorted(range(len(bm25_ids)), key=lambda i: scores[i], reverse=True)
+        bm25_rank = {bm25_ids[i]: rank for rank, i in enumerate(order)}
+
+    def fused_score(doc_id: str) -> float:
+        score = 0.0
+        if doc_id in semantic_rank:
+            score += 1.0 / (RRF_K + semantic_rank[doc_id] + 1)
+        if doc_id in bm25_rank:
+            score += 1.0 / (RRF_K + bm25_rank[doc_id] + 1)
+        return score
+
+    ranked_ids = sorted(by_id, key=fused_score, reverse=True)[:top_k]
+
+    results: list[Result] = []
+    for doc_id in ranked_ids:
+        entry = by_id[doc_id]
+        meta = entry["meta"]
         results.append(
             Result(
-                text=text,
+                text=entry["text"],
                 source=str(meta.get("source", "unknown")),
                 label=f"{meta.get('source', 'unknown')}#{meta.get('index', 0)}",
-                distance=float(distance),
+                distance=entry["distance"],
                 produced_by=str(meta.get("produced_by", "unknown")),
             )
         )
@@ -236,5 +321,6 @@ def index_exists(corpus: str | None = None, variant: str = "default") -> bool:
 
 def reset():
     """Delete every index. Occasionally the fastest way out of a mess."""
+    _bm25_cache.clear()
     if config.CHROMA_DIR.exists():
         shutil.rmtree(config.CHROMA_DIR)
