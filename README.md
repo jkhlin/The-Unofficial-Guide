@@ -299,6 +299,16 @@ The criterion was met because the relevance gate refused all five out-of-corpus 
 
      Milestone 3. -->
 
+### Criterion 5 — Wrong city or location
+
+**Stage:** Criterion design (observed at generation)
+
+Criterion 5 was missed because none of the 15 generated answers contained an unsupported city or location. This is not actually a failure of the RAG system. The original criterion was written backwards: it treats producing a wrong location as a successful result.
+
+The generation stage is specifically instructed in `generate.py` to use only the retrieved documents and not introduce outside information. Because the retrieved context did not contain unrelated locations and the grounding prompt tells the model not to guess, the system avoided the behavior that Criterion 5 accidentally requires.
+
+The mechanism behind this miss is therefore a problem with how I defined the criterion rather than a failure in the retrieval or generation pipeline. A better criterion would measure whether zero responses introduce unsupported locations.
+
 ### Scorer mismatch
 
 **Stage:** Evaluation/scoring
