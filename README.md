@@ -293,6 +293,62 @@ The criterion was met because the relevance gate refused all five out-of-corpus 
 
      Milestone 3. -->
 
+### Scorer mismatch
+
+**Stage:** Evaluation/scoring
+
+Several answers contained the correct information but were still marked as `fail` because `scorer.py` checks whether the exact `expects` string appears in the generated answer.
+
+For example:
+
+**Question:** `When does study abroad programs start?`
+
+**Expected:** `In the month of October.`
+
+**Actual output:**
+
+> Applications for study abroad open in October for the following academic year.
+
+The answer contains the correct information, but it does not contain the exact expected phrase, so the scorer marked it as `fail`.
+
+The same issue happened with questions such as CS 340 and Innisfree Hall. The generated answers contained relevant information, but the wording did not exactly match the `expects` string.
+
+---
+
+### Campus jobs question
+
+**Stage:** Retrieval
+
+**Question:** `How many on campus jobs are there?`
+
+**Retrieved documents:**
+
+- `admin_campus_jobs_and_financial_aid.txt`
+- `housing_aldridge_hall.txt`
+- `money_jobs.txt`
+
+**Actual output:**
+
+> I do not have enough information to answer how many on-campus jobs there are.
+
+The retriever found documents related to campus jobs, but the retrieved chunks did not contain the specific number needed to answer the question.
+
+Because the answer was not available in the retrieved context, the model correctly refused to invent a number.
+
+The failure happened at the retrieval stage because semantic search found documents about the correct topic, but not a chunk containing the exact fact the question required.
+
+---
+
+### Pattern across the failures
+
+There were two main patterns in the failed question-level results.
+
+First, several failures were caused by the scorer requiring an exact phrase instead of accepting a correct paraphrase.
+
+Second, the campus jobs question exposed a real retrieval limitation. The system retrieved documents about the correct topic, but the specific fact needed to answer the question was not present in the retrieved chunks.
+
+Criterion 1 still met its original target of `4/5`, but it only met the minimum threshold. If I tightened this criterion to `5/5`, the campus jobs question would expose this retrieval weakness more clearly.
+
 ## The Improvement
 
 **What I changed:**
