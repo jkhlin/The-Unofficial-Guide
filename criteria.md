@@ -145,24 +145,3 @@ information.
      The whole reason the originals stay visible is so someone can see what you
      said before you knew the answer.
      ───────────────────────────────────────────────────────────────────────── -->
-
-### Criterion 1 — Retrieved chunk contains the answer
-**Target:** 4 of 5  
-**Runs:** 4/5, 4/5, 4/5  
-**Verdict: MET**
-
-The criterion was met because at least 4 of the 5 test questions had the answer present in the retrieved chunks in every run.
-
-### Criterion 2 — Every answer names a source
-**Target:** 5 of 5  
-**Runs:** 5/5, 5/5, 5/5  
-**Verdict: MET**
-
-The criterion was met because all five generated answers named at least one source in all three runs.
-
-### Criterion 3 — Gate stops out-of-corpus questions
-**Target:** 4 of 5  
-**Runs:** 5/5, 5/5, 5/5  
-**Verdict: MET**
-
-The criterion was met because the relevance gate refused all five out-of-corpus questions, exceeding the target of 4 of 5.
