@@ -167,6 +167,8 @@ I compared the best retrieval distance for questions that my corpus covers with 
 | 1. Retrieved chunk contains the answer | 4 of 5 | 4/5 | 4/5 | 4/5 | MET |
 | 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
 | 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Retrieved chunks match the topic of the question | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Having a wrong city or location listed in at least one response | At least 1 | 0/5 | 0/5 | 0/5 | MISSED |
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
@@ -244,11 +246,11 @@ Actual output:
 
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunks contain the answer | MET | At least 4 of the 5 questions had the answer available in the retrieved chunks in all three runs, so the 4-of-5 target held every time. |
+| 2 | Every answer names a source | MET | All 5 answers named at least one source document in all three runs, meeting the 5-of-5 target. |
+| 3 | Relevance gate stops out-of-corpus questions | MET | The relevance gate refused all 5 out-of-corpus questions. Since retrieval and the gate are deterministic, the result is 5/5 for all three run columns, which exceeds the 4-of-5 target. |
+| 4 | Retrieved chunks match the topic of the question | MET | For all 5 test questions, at least one of the top three retrieved results matched the main topic being asked about, such as `course_cs_340_workload.txt` for CS 340 and `dining_the_atrium.txt` for The Atrium. |
+| 5 | Having a wrong city or location listed in at least one response | MISSED | None of the responses contained a wrong city or location. Because the original criterion literally requires at least one response to contain a wrong city or location, the criterion was not met as written. |
 
 ## Diagnoses
 
