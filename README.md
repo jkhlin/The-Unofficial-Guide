@@ -367,11 +367,11 @@ I chose hybrid search because my diagnosis showed a retrieval weakness on the qu
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Retrieved chunks match the topic of the question | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Having a wrong city or location listed in at least one response | At least 1 | 0/5 | 0/5 | 0/5 | MISSED |
 
 **Did it help?**
 
@@ -381,6 +381,16 @@ I chose hybrid search because my diagnosis showed a retrieval weakness on the qu
      tell.
 
      Milestone 4. -->
+
+The hybrid-search change affected which secondary documents were retrieved, but it did not improve the criterion-level results.
+
+Before the change, Criterion 1 was `4/5` in all three runs, and after the change it remained `4/5` in all three runs.
+
+The main problem I was trying to fix also remained. For the question `How many on campus jobs are there?`, hybrid search retrieved `admin_campus_jobs_and_financial_aid.txt` and `money_jobs.txt`, but the retrieved context still did not contain the specific number needed to answer the question. The system therefore continued to respond that it did not have enough information.
+
+The change did modify some retrieval results. For example, the CS 340 query retrieved `course_cs_340_exams.txt` after the change, and The Atrium query retrieved `dining_the_atrium.txt` and `dining_the_atrium_followup.txt`. However, these changes did not improve any of the five acceptance-criterion scores.
+
+Therefore, hybrid search did not measurably improve the system on this test set.
 
 ## What's Still Broken
 
