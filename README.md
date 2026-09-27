@@ -352,8 +352,10 @@ Criterion 1 still met its original target of `4/5`, but it only met the minimum 
 ## The Improvement
 
 **What I changed:**
+I changed retrieval from semantic search only to hybrid search. The new retrieval method combines the existing embedding-based similarity search with BM25 keyword search so that exact words and phrases can influence which chunks are returned.
 
 **Why I picked it:**
+I chose hybrid search because my diagnosis showed a retrieval weakness on the question How many on campus jobs are there?. The original semantic search found documents related to campus jobs, but it did not retrieve enough specific information to answer the requested count. BM25 may help because it gives more weight to exact terms such as campus, jobs, and other wording from the question.
 
 <!-- Connect it to a specific diagnosis above in one sentence. If you can't,
      you picked a fix because it sounded impressive. -->
