@@ -37,6 +37,10 @@ python serve.py
 
 It listens on `http://localhost:5000` (set `PORT` to change it).
 
+It does not reload when you edit code. After changing any `.py` file, stop it
+(Ctrl-C) and start it again, or it keeps serving the old version (and, for
+example, will not write the log).
+
 ## Using it
 
 ```powershell
