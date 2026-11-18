@@ -445,3 +445,34 @@ If I continued improving the system, I would inspect the underlying corpus to co
 If I wrote the acceptance criteria again, I would change Criterion 5 because its wording accidentally treats a wrong location as a successful result. I intended to measure the opposite: whether the system avoids introducing locations that are unsupported by the retrieved documents.
 
 I would also consider making Criterion 1 stricter. The original target was `4 of 5`, which the system met in every run, but the same campus-jobs question failed consistently. A `5 of 5` target would have made that retrieval weakness more visible.
+
+
+---
+
+# Capstone
+
+**The System**
+
+I'm extending **The Unofficial Guide**, the campus_life RAG system from Units 1 and 2 (this repository). It's the system whose weak points I know best from writing its Unit 2 criteria, run log and diagnoses. It already has retrieval, a relevance gate, a grounded prompt, and a Flask wrapper (`serve.py`) that serves the same `app.py::ask_pipeline` over HTTP.
+
+**The Shape**
+
+I picked **Shape A: Deploy and instrument**, on **Path B (local with logs)**. The system has only ever run as a one-shot command (`app.py`) or as a bare Flask shell (`serve.py`) with, by design, no logging, no timing and no metrics. What I'm adding is the operational layer:
+
+- a structured JSON-lines log, one record per request, with named fields: timestamp, question in, answer out, whether it was refused, best distance, sources, and end-to-end latency;
+- timing and token counts around the stages of a request, so I can report latency and cost per run from measurement rather than from the docs;
+- a single documented command that starts the service from a clean checkout, written up in `RUNNING.md` along with what the environment needs (Python version, pinned dependencies, the roughly 80 MB local embedding model);
+- a committed run record: a real session's log pasted into this README as text.
+
+I'm taking Path B because the system carries a local ONNX embedding model, which is a poor fit for a 512 MB free host, and because Path B makes me write down a run that someone else can reproduce.
+
+**Out of Scope**
+
+- **No change to retrieval or answer quality.** I'm not touching the chunker, the threshold, the hybrid/BM25 search, or the prompt. I considered finally fixing the campus-jobs retrieval miss from Unit 2, but that would be Shape C, and it would change the system I'm measuring.
+- **No cloud deployment.** No hosting account, container image or URL. Path B only; a hosted run is a stretch goal I'm not committing to.
+- **No new interface and no metrics stack.** I'm not building a dashboard, Prometheus, or a log shipper. The log is a plain `.jsonl` file that I summarize with a short script.
+- **No hardening.** I'm not adding retries, timeouts or failure injection beyond what `generate.py` already does. That is Shape B.
+
+**Size check**
+
+Roughly an hour of building: wrap `/ask` in `serve.py` with timing and a JSONL writer, capture token usage from the generation call, rewrite `RUNNING.md`, and write a small summarizing script. If the token-usage capture turns out to need changes deep inside `generate.py`, I will fall back to measuring cost from latency and the model's published per-token price, and say so.
