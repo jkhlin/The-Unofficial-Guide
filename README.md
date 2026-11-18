@@ -451,7 +451,7 @@ I would also consider making Criterion 1 stricter. The original target was `4 of
 
 # Capstone
 
-**The System**
+**What This Extends**
 
 I'm extending **The Unofficial Guide**, the campus_life RAG system from Units 1 and 2 (this repository). It's the system whose weak points I know best from writing its Unit 2 criteria, run log and diagnoses. It already has retrieval, a relevance gate, a grounded prompt, and a Flask wrapper (`serve.py`) that serves the same `app.py::ask_pipeline` over HTTP.
 
@@ -477,6 +477,10 @@ I'm taking Path B because the system carries a local ONNX embedding model, which
 
 Roughly an hour of building: wrap `/ask` in `serve.py` with timing and a JSONL writer, capture token usage from the generation call, rewrite `RUNNING.md`, and write a small summarizing script. If the token-usage capture turns out to need changes deep inside `generate.py`, I will fall back to measuring cost from latency and the model's published per-token price, and say so.
 
+
+**Running It**
+
+Path B: local, with logs. The service starts with one command, `python serve.py`, and `RUNNING.md` has the setup (Python 3.11 to 3.13, the pinned `requirements.txt`, the roughly 80 MB local embedding model, the `GEMINI_API_KEY` in `.env`) and how to read the log back. I did not do the clean-clone test the milestone suggests; I checked instead that every file `RUNNING.md` names exists in the repo.
 
 **Instrumentation**
 
@@ -516,6 +520,8 @@ What the session shows, from `python summarize_log.py results/m3_instrumentation
 
 A cache hit or a refused question makes no model call, so it costs nothing and its token fields are 0. The $0.00023 applies only to a question that reaches the model.
 
+
+*A hundred people a day.* Assume each person asks 5 questions a day, which is my guess, not a measurement, and assume the worst case where every one reaches the model (cached and refused questions cost nothing). That is 100 × 5 = 500 questions a day, and 500 × $0.000233 (the measured cost per live question, from 10 runs: 405 input tokens and 45 output tokens, at the list prices above) = about **$0.12 a day, or about $3.50 for a 30-day month**. The prices are unverified third-party figures, so this is an estimate on a measured token count.
 
 **Capstone Run Log**
 
@@ -634,6 +640,8 @@ Verdicts are against the targets in `criteria.md`, which I did not change. A cri
 - The 15-per-minute limit is hard-coded in `config.py`. If the quota changes, the service breaks the same way again. The better fix is to read the `retryDelay` out of the 429 and wait for it.
 - The 14 limit is per process. Two servers sharing one key would still exceed 15.
 
+**What I'd do first, if there were another unit.** I would log stderr and a per-request retry count from inside `generate.py::generate`, then re-run criterion 3 three times. It is the only miss, I could not explain it with the instrumentation I built, and until it is explained I cannot say whether my rate-limit fix helped, hurt, or did nothing to latency.
+
 **What I'd Do Differently**
 
 - Capture stderr and a retry count from the start. The two slow-request mysteries (criterion 3 after the fix, the 38 s request before it) are about the same thing, and the instrumentation I built cannot see it.
@@ -643,3 +651,10 @@ Verdicts are against the targets in `criteria.md`, which I did not change. A cri
 **A mistake in my own testing**
 
 My first attempt at the "before" burst probe accidentally re-ran all five criteria into `results/capstone_before/`. Because the service appends to its log file and the harness reused the same folders, criteria 1 to 4 re-read the first run's records, so that re-run produced no new data for them. I restored every log file in that folder to its first-run contents (checking timestamps), and made the harness refuse to reuse a folder that already holds logs. The five-criteria results in this README are from the first, clean run. The `result.json` files in `capstone_before/` were rewritten by the mistaken re-run, but for criteria 1 to 4 they hold the same content.
+
+
+**How I Used AI**
+
+*Choosing the shape.* I pasted the capstone instructions and asked which of the three shapes was easiest for this project. Claude read the repo and pointed at things I would have had to find myself: `serve.py` says it deliberately has no logging, timing or metrics, `requirements.txt` already pins `flask` and `gunicorn` for deployment, and my local ONNX embedding model is a poor fit for a 512 MB free host. Its recommendation was Shape A. I took the shape and chose Path B (local with logs) myself, because it was less work than a cloud deployment. I did not take its suggestion to try a clean clone of the repo; I told it that was not necessary.
+
+*A test run that was not a test.* I asked Claude to build the harness that runs my five criteria three times. It wrote one, and when I had it re-run the burst probe, the run silently repeated all five criteria and printed latencies identical to the first run to the decimal. That repeat was the clue: the service appends to its log and the harness reused the same folders, so the second run re-read the first run's records. Claude traced it by counting log lines (exactly double in every file) and comparing timestamps, I had it restore the logs to the first run and make the harness refuse to reuse a folder, and I kept the first run's results. It also, earlier, proposed a `taskkill` that would have ended every Python process on my machine; the permission check blocked it and it switched to stopping only the test server by port. I cut the third "after" trial myself because I was out of time, and the README says so.
