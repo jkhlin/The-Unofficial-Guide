@@ -1,147 +1,157 @@
-# Acceptance criteria — The Unofficial Guide
+# Acceptance criteria — Capstone (Shape A: deploy and instrument)
 
-Five criteria that say what "working" means for this system, written in unit 1
-**before** any results existed.
+Five criteria for the operational layer I added to The Unofficial Guide: the
+web service in `serve.py`, its structured request log, and the numbers read
+back from that log. Written before any trial has been run. (The Unit 1
+criteria that used to be in this file are in git history and in the Unit 2
+Verdicts section of the README.)
 
-An acceptance criterion names a target: a number, a count, a rate, or something
-a person could plainly observe. *"Retrieval works"* is an opinion. *"For at
-least 4 of my 5 test questions, the top results include a chunk containing the
-answer"* is a criterion.
+**How a criterion is judged.** Each criterion is tested in 3 trials. A
+criterion is **met** only if all 3 trials meet its target. One bad trial
+makes it **missed**, because anything that touches a model or a network can
+come out differently twice.
 
-Under each one, write a sentence or two on **why that target** and not a
-stricter or looser one. A reason that says something about your corpus or your
-pipeline earns credit; *"80% seemed reasonable"* does not.
+**Words used below.**
+- *Cold request*: the first request after `python serve.py` starts. It loads
+  the embedding model and builds the keyword index.
+- *Warm request*: any later request to the same running process.
+- *Live request*: a request that reaches the Gemini API (cache off, question
+  passes the gate). *Cached*: answered from `.cache/`. *Refused*: stopped by
+  the relevance gate.
+- *Trial*: a fresh start of `python serve.py` with a new empty log file, then
+  the requests the criterion describes.
 
-> Missing your own targets next unit costs you nothing. Setting a target so
-> easy you can't miss it does.
+**What I already knew when I set the numbers.** In Milestone 3 I measured 10
+live requests: about 405 input and 45 output tokens, warm latency 0.74 to
+1.26 s, one 10.2 s cold start. These are the only results I have. I set the
+targets below to leave some margin over them, not to be certain passes.
 
----
-
-## 1. Retrieved chunks contain the answer
-
-For at least 4 of my 5 test questions, the retrieved chunks include one that
-contains the answer.
-
-**Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
-Accuracy matters in this case I am expecting a 80%+ average answer.
----
-
-## 2. Every answer names a source
-
-Every answer the system produces names at least one source document.
-
-**Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
-Some questions don't need to involve a document such as it could be based
-on inference and context on other documents to give the most relevant
-answer.
----
-
-## 3. The relevance gate stops out-of-corpus questions
-
-When I ask a question my documents clearly don't cover, the relevance gate
-stops it and the system returns "I don't have enough information about that" —
-in at least 4 of 5 tries.
-
-<!-- The five questions are the ones in `OUT_OF_SCOPE` at the bottom of
-     `questions.py`, and `run_eval.py` puts them through the gate and writes
-     what happened into your run log. Swap them for your own if you'd rather —
-     just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
-
-**Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
-It is important for the response to not be misleading or hallucinating.
-Giving an incorrect answer is worse than not having misleading answer.
----
-
-## 4. Something about your chunks
-
-Make sure the content is relevant to the question asked by having relevant 
-keywords for all 5 queries by parsing and recognizing the labels and then 
-splitting them
-
-> **Revised in unit 2:** For all 5 test questions, at least one of the top three retrieved chunks contains the main topic or named entity from the question and enough surrounding context to understand what that chunk is about.
->
-> **Why revised:** My original criterion said the chunks should have "relevant keywords," but it did not define exactly what counted as relevant or how I would measure it consistently. The revised criterion gives me an observable check for each question: whether at least one retrieved chunk contains the question's main topic and enough context to be useful.
-
-     How would you know if your chunks were the right size? Name something
-     countable or observable.
-
-     Examples of the right shape — don't copy these, they should come from
-     what you actually saw in Milestone 3:
-       - "At least 4 of 5 sampled chunks read as a complete thought, with no
-          sentence cut in half at either end."
-       - "No chunk is shorter than 200 characters, since anything below that
-          in my corpus turned out to be a heading with no content under it." -->
-
-
-
-**Why this target:**
-If there is a slight error in terms of not getting the relevant information
-that means it's hard to determine whether the chunk sizing is accurate. 
-Sincecity_guides has a wide range of labelled sections so depending on the 
-question some chunks need to be less relevant and some need to be more
-
+Criteria 1 to 4 are about the extension. Criterion 5 is about the system
+underneath.
 
 ---
 
-## 5. Your choice
-Having a wrong city or location listed in at least one response.
-<!-- YOU WRITE THIS ONE TOO.
+## 1. Every request leaves one complete, internally consistent log record
 
-     Pick something you actually care about getting right. It could be about
-     speed, about refusals, about a particular kind of question your corpus
-     handles badly, about source attribution being correct rather than merely
-     present — anything, as long as it names a number or an observable
-     outcome. -->
+In each trial I send 12 requests: 4 live, 3 cached (repeats of the live ones),
+3 refused (out of scope), 2 rejected (empty body, whitespace-only question).
+The log file must then have **exactly 12 records**, every record must contain
+**all 15 fields** (`ts`, `request_id`, `route`, `status`, `question`,
+`answer`, `refused`, `best_distance`, `sources`, `latency_ms`, `cache_hit`,
+`model_calls`, `prompt_tokens`, `output_tokens`, `error`, with the field
+present even when its value is null), and the class of each record must
+match what I sent: live means `model_calls = 1` and tokens above 0, cached
+means `cache_hit = true`, `model_calls = 0` and tokens 0, refused means
+`refused = true` and `model_calls = 0`. **12 of 12 records correct, 0 missing,
+0 extra, in all 3 trials.**
 
-
-
-**Why this target:**
-Having a wrong city or location that is not relevant in the corpus
-means it is just either coming up with a random area on the
-documents. No matter how correct it sounds it is misleading
-information.
-
+**Why this target:** The log is the only evidence Milestone 5 has, so one
+missing or mislabelled record is a hole in the evidence, not a rounding
+error. That is why the target is all 12 and not "most". It is exact because
+the number of requests I send is known and the log should match it. The
+class check matters because the token fields are computed as before-and-after
+differences of counters in `generate.py`, and a wrong cache-hit label would
+silently corrupt every cost number.
 
 ---
 
-<!-- ─────────────────────────────────────────────────────────────────────────
-     UNIT 2 — read this before you change anything above.
+## 2. Bad input and a failing model call return a clean error, leave a record, and don't take the service down
 
-     If a criterion turns out to be BROKEN rather than merely unmet, you can
-     revise it, and that earns credit. But never delete or edit the original
-     line. Add the revision underneath it, like this:
+In each trial I send 4 failures: an empty JSON body, a whitespace-only
+question, a body that is not JSON at all, and (on a second server started with
+`AI201_MODEL` set to a model name that does not exist) one valid question
+whose model call fails. Each must (a) return the right HTTP status (`400` for
+the three bad inputs, `500` for the failed model call) with a JSON `error`
+message and no stack trace in the response, (b) leave a log record with that
+same `status` and a non-empty `error` field, and (c) be followed by a normal
+question that returns `200`, to show the service is still up. **4 of 4
+failures handled and 4 of 4 followed by a successful request, in all 3
+trials.**
 
-         ## 1. Retrieved chunks contain the answer
+**Why this target:** A failure that shows up only as a missing log line is the
+kind I can't diagnose later, so the record is part of the criterion, not just
+the status code. The follow-up request is there because the way a small Flask
+service really dies is by crashing on one bad request and then answering
+nothing, and the only way to see that is to ask again. I include a non-JSON
+body because `serve.py` reads the body with `get_json(silent=True)` and I
+believe, but have not tested, that this turns it into an empty question. The
+real model failure is the case that actually costs something: it is the
+one where a user waited and got nothing.
 
-         For at least 4 of my 5 test questions, the retrieved chunks include
-         one that contains the answer.
+---
 
-         **Why this target:** ...
+## 3. Warm live requests are fast and have no long tail
 
-         > **Revised in unit 2:** For at least 4 of 5 questions, the top three
-         > results contain the answer.
-         >
-         > **Why revised:** I couldn't judge "the chunks include one that
-         > contains the answer" the same way twice — I scored two questions
-         > differently on Monday than on Wednesday. The new version is
-         > something I can actually check.
+In each trial I start the service, discard the cold request, then send 10
+live requests (`AI201_CACHE=0`, in-scope questions only, one at a time).
+**Median latency of the 10 is at most 1.2 s, and the slowest of the 10 is at
+most 2.5 s**, as recorded in `latency_ms`. This criterion is about warm
+requests only. The cold request is excluded and is reported separately, not
+judged.
 
-     That's a revision because the criterion couldn't be MEASURED.
+**Why this target:** Median 1.2 s is about 25% above the 0.95 s average I
+measured in Milestone 3, which is tight enough that a real slowdown shows up
+and loose enough to absorb normal variation. The maximum is the stricter half
+on purpose: the median hides the occasional slow call to the Gemini API, and
+that slow call is what a user would notice. 2.5 s is about double the worst
+warm request I have seen (1.26 s). Both numbers are for a request that calls
+the model, because that is the slowest warm path; cached and refused requests
+were around 0.24 s and don't need a separate target. I may miss this one if
+the API has a slow patch, and that would be an honest result.
 
-     Lowering a target because you missed it is not a revision, and it costs
-     you the point:
+---
 
-         ✗ "I said 4 of 5 but got 2 of 5, so 2 of 5 is more realistic."
+## 4. A live answer costs at most $0.0004, as computed from the log alone
 
-     A number you missed stays where it is, gets diagnosed, and gets a fix
-     attempted. That's where the points are.
+In each trial, over the same 10 live requests as criterion 3,
+`summarize_log.py` reads the log and computes the mean cost per live request
+from the logged `prompt_tokens` and `output_tokens`, at **$0.30 per million
+input tokens and $2.50 per million output tokens**. **Mean cost is at most
+$0.0004 per live request, and no single live request is logged with 0 tokens
+or with more than 1,500 tokens in total.**
 
-     The whole reason the originals stay visible is so someone can see what you
-     said before you knew the answer.
-     ───────────────────────────────────────────────────────────────────────── -->
+**Why this target:** My Milestone 3 measurement was $0.00023 per live
+request, so $0.0004 leaves about 70% headroom. It is not a number the system
+can meet by accident: if a change made the prompt carry far more retrieved
+text, or the model started giving long answers (output tokens cost about 8
+times as much as input tokens), the mean would cross it. The per-request
+bounds catch two failures that a mean can hide: a request logged with 0
+tokens that actually called the model (a broken counter) and a single
+runaway-sized prompt. The prices are list prices from third-party pages, not
+Google's page, so this is a cost estimate on measured tokens; I'm writing the
+target in dollars because that is the unit a person budgets in.
+
+---
+
+## 5. The web service gives the same answer decisions as the command line
+
+For the 5 in-scope questions in `questions.py` and the 5 out-of-scope ones,
+`POST /ask` and `python app.py ask` must agree on whether the question is
+refused, and for the in-scope ones the web service must name the same set of
+source files. **10 of 10 questions agree on the refused/answered decision, and
+5 of 5 in-scope questions return the same sources, in all 3 trials.**
+
+**Why this target:** `serve.py` is supposed to be a thin wrapper around
+`app.py::ask_pipeline`, and the new code sits between the request and that
+function. This is my regression check that the instrumentation did not change
+how the system answers. I'm only comparing the decision and the sources, not
+the answer text, because the model's wording legitimately varies between
+runs and comparing it would measure the model, not my code. The target is all
+10 because the gate is a plain threshold on retrieval, which is deterministic
+for a given index, so any disagreement would be a real bug and not noise.
+
+---
+
+## Self-check
+
+| # | Names a number or something visible? | Can I run it and read the result? | One thing, not several? | Could it actually be missed? |
+|---|---|---|---|---|
+| 1 | 12 of 12 records, 15 fields | count lines, check keys with a script | one theme (log integrity) | yes, if any field or label is wrong |
+| 2 | 4 of 4 handled, status codes | send the requests, read statuses and log | one theme (bad path) | yes, the non-JSON body is untested |
+| 3 | median 1.2 s, max 2.5 s | `latency_ms` in the log | warm latency only | yes, API slow patches |
+| 4 | $0.0004, 0 or 1,500 tokens | `summarize_log.py` | cost only | less likely, but the per-request bounds can trip |
+| 5 | 10 of 10, 5 of 5 | run both paths and compare | wrapper equivalence | yes, if the wrapper drifted |
+
+None of these turns on "works", "reliable", "good" or "fast" without a
+number next to it. Criterion 4 is the one I expect to meet; if it is the only
+one I meet, the other targets were probably the right level of hard.
