@@ -39,6 +39,12 @@ def main():
     args = parser.parse_args()
 
     path = Path(args.log)
+    if not path.exists():
+        raise SystemExit(
+            f"No log at {path}.\n"
+            "The log is created by the first /ask request. Start the service "
+            "(`python serve.py`), send a request, then run this again."
+        )
     records = [
         json.loads(line)
         for line in path.read_text(encoding="utf-8").splitlines()
