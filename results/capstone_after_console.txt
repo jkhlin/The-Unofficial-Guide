@@ -1,0 +1,24 @@
+
+=== trial 1 ===
+  c1 12/12
+  (waiting 65s so criterion 2 starts with a clean per-minute quota)
+  c2 4/4
+  (waiting 65s so criteria 3 and 4 starts with a clean per-minute quota)
+  c3 median 1.56s / max 3.50s | c4 $0.000244 mean
+  (waiting 65s so criterion 5 starts with a clean per-minute quota)
+  c5 10/10 & 5/5
+  (waiting 65s so the burst probe starts with a clean per-minute quota)
+  probe 20/20 ok in 84.8s
+  (waiting 65s so trial 2 starts with a clean per-minute quota)
+
+=== trial 2 ===
+  c1 12/12
+  (waiting 65s so criterion 2 starts with a clean per-minute quota)
+  c2 4/4
+  (waiting 65s so criteria 3 and 4 starts with a clean per-minute quota)
+  c3 median 0.75s / max 10.27s | c4 $0.000249 mean
+  (waiting 65s so criterion 5 starts with a clean per-minute quota)
+  c5 10/10 & 5/5
+  (waiting 65s so the burst probe starts with a clean per-minute quota)
+  probe 20/20 ok in 71.1s
+  (waiting 65s so trial 3 starts with a clean per-minute quota)

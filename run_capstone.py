@@ -63,6 +63,11 @@ class Server:
     def __init__(self, trial_dir, name, cache=True, model=None):
         self.port = free_port()
         self.log = trial_dir / f"{name}_log.jsonl"
+        if self.log.exists():
+            # The service appends to its log. Reusing a folder would mix two runs
+            # and make the harness read the old run's records as the new one's.
+            raise SystemExit(f"{self.log} already exists. Use a new --label; "
+                             "the harness never reuses a folder that holds results.")
         self.cache_dir = trial_dir / f"{name}_cache"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         env = dict(os.environ)
@@ -282,6 +287,32 @@ def criterion_5(trial_dir):
             "value": f"{decisions_agree}/10 & {sources_agree}/5", "evidence": rows}
 
 
+BURST_SIZE = 20          # supplementary probe, see criteria.md
+BURST_TARGET_OK = 20
+
+
+def burst_probe(trial_dir):
+    """Supplementary probe: 20 live requests back to back, no pacing at all."""
+    srv = Server(trial_dir, "probe", cache=False)
+    started = time.perf_counter()
+    statuses = []
+    try:
+        for i in range(BURST_SIZE):
+            status, _, _ = srv.ask(IN_SCOPE[i % len(IN_SCOPE)])
+            statuses.append(status)
+        records = srv.records()
+    finally:
+        srv.stop()
+    wall = time.perf_counter() - started
+    lat = [r["latency_ms"] for r in records]
+    ok = sum(1 for st in statuses if st == 200)
+    errors = [r["error"][:160] for r in records if r["status"] != 200]
+    return {"met": ok == BURST_TARGET_OK, "value": f"{ok}/{BURST_SIZE} ok", "ok": ok,
+            "statuses": statuses, "wall_s": round(wall, 1),
+            "median_ms": statistics.median(lat) if lat else None, "max_ms": max(lat) if lat else None,
+            "errors": errors, "evidence": records}
+
+
 # ─── Orchestration ───────────────────────────────────────────────────────────
 
 QUIET_SECONDS = 65  # the free tier allows 15 model calls per minute, shared by every server
@@ -293,11 +324,16 @@ def quiet_period(why):
     time.sleep(QUIET_SECONDS)
 
 
-def run_trial(out_dir, n):
+def run_trial(out_dir, n, probe=False, only_probe=False):
     trial_dir = out_dir / f"trial{n}"
     trial_dir.mkdir(parents=True, exist_ok=True)
     result = {}
     print(f"\n=== trial {n} ===", flush=True)
+    if only_probe:
+        result["probe"] = burst_probe(trial_dir)
+        print("  probe", result["probe"]["value"], f"in {result['probe']['wall_s']}s", flush=True)
+        (trial_dir / "probe.json").write_text(json.dumps(result["probe"], indent=2, default=str), encoding="utf-8")
+        return result
     result["c1"] = criterion_1(trial_dir);                 print("  c1", result["c1"]["value"], flush=True)
     quiet_period("criterion 2")
     result["c2"] = criterion_2(trial_dir);                 print("  c2", result["c2"]["value"], flush=True)
@@ -306,6 +342,10 @@ def run_trial(out_dir, n):
     print("  c3", result["c3"]["value"], "| c4", result["c4"]["value"], flush=True)
     quiet_period("criterion 5")
     result["c5"] = criterion_5(trial_dir);                 print("  c5", result["c5"]["value"], flush=True)
+    if probe:
+        quiet_period("the burst probe")
+        result["probe"] = burst_probe(trial_dir)
+        print("  probe", result["probe"]["value"], f"in {result['probe']['wall_s']}s", flush=True)
     (trial_dir / "result.json").write_text(json.dumps(result, indent=2, default=str), encoding="utf-8")
     return result
 
@@ -340,11 +380,31 @@ def write_run_log(out_dir, label, trials):
     return "\n".join(lines)
 
 
+def write_probe_log(out_dir, label, trials):
+    lines = [f"# Burst probe — {label}", "",
+             f"Supplementary check (not one of the five criteria): {BURST_SIZE} live requests, back to back, "
+             f"no pacing. Target: {BURST_TARGET_OK} of {BURST_SIZE} return 200.", "",
+             "| Run | 200s | Non-200s | Median latency | Slowest | Wall time |", "|---|---|---|---|---|---|"]
+    for i, t in enumerate(trials, 1):
+        pr = t["probe"]
+        lines.append(f"| {i} | {pr['ok']}/{BURST_SIZE} | {BURST_SIZE - pr['ok']} | {pr['median_ms'] / 1000:.2f} s | "
+                     f"{pr['max_ms'] / 1000:.1f} s | {pr['wall_s']} s |")
+    verdict = "MET" if all(t["probe"]["met"] for t in trials) else "MISSED"
+    lines += ["", f"Verdict: {verdict}", ""]
+    for i, t in enumerate(trials, 1):
+        for e in sorted(set(t["probe"]["errors"])):
+            lines.append(f"- trial {i} error: {e}")
+    (out_dir / "probe_log.md").write_text(chr(10).join(lines), encoding="utf-8")
+    return chr(10).join(lines)
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8")  # the table uses check marks
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", required=True, help="before or after")
     parser.add_argument("--trials", type=int, default=3)
+    parser.add_argument("--probe", action="store_true", help="also run the burst probe in every trial")
+    parser.add_argument("--only-probe", action="store_true", help="run only the burst probe")
     args = parser.parse_args()
     out_dir = ROOT / "results" / f"capstone_{args.label}"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -352,8 +412,11 @@ def main():
     for n in range(1, args.trials + 1):
         if n > 1:
             quiet_period(f"trial {n}")
-        trials.append(run_trial(out_dir, n))
-    print("\n" + write_run_log(out_dir, args.label, trials))
+        trials.append(run_trial(out_dir, n, probe=args.probe, only_probe=args.only_probe))
+    if not args.only_probe:
+        print("\n" + write_run_log(out_dir, args.label, trials))
+    if args.probe or args.only_probe:
+        print("\n" + write_probe_log(out_dir, args.label, trials))
 
 
 if __name__ == "__main__":

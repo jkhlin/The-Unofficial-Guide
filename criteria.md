@@ -155,3 +155,21 @@ for a given index, so any disagreement would be a real bug and not noise.
 None of these turns on "works", "reliable", "good" or "fast" without a
 number next to it. Criterion 4 is the one I expect to meet; if it is the only
 one I meet, the other targets were probably the right level of hard.
+
+---
+
+## Supplementary probe (added in Milestone 6, not one of the five)
+
+**Added after the first results, and I am saying so.** The five criteria above
+were written before any trial. After the first test run showed that the
+Gemini free tier allows 15 model calls per minute while `config.py` lets the
+service make 30, I added one probe for that gap. It does not replace or
+change any of the five, and it is not counted in their verdicts.
+
+**Probe:** send 20 live requests back to back with no pacing (cache off,
+in-scope questions, one at a time). **Target: 20 of 20 return `200`.** It is
+written down here before the probe is run. Three trials, same as the rest.
+
+**Why 20 of 20:** a user who sends 20 questions in a row should get 20
+answers. A `500` caused by the service exceeding its own provider's quota is
+a failure of the service, not of the user.

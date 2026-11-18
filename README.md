@@ -587,3 +587,59 @@ All five criteria were met in all three trials. Criterion 3 in trial 2 came clos
 | How do I write a for loop in Rust? | refused | refused | - | - |
 
 **What this run does not cover.** The pacing means the 15-per-minute API limit was never hit during the official trials. In the throwaway trial, where I did not pace, it was hit: the service answered `500` with `Still rate limited after 4 attempts`, because `config.py` allows 30 calls per minute while the free tier allows 15 and the retries wait only 15 s in total. I did not write a criterion for that, so it is a finding and not a verdict. Also, the empty body, whitespace-only question and non-JSON body all return `400` with the same log line (`"no question in request"`), so the log cannot tell them apart.
+
+
+**Verdicts**
+
+Verdicts are against the targets in `criteria.md`, which I did not change. A criterion is MET only if every trial that ran met it.
+
+| Criterion | Before (3 trials) | After the fix (2 trials) |
+|---|---|---|
+| 1. 12 of 12 log records correct | MET (12/12, 12/12, 12/12) | MET (12/12, 12/12) |
+| 2. Bad input and a failing model handled cleanly | MET (4/4 each) | MET (4/4 each) |
+| 3. Warm latency: median ≤ 1.2 s and max ≤ 2.5 s | MET (0.79/1.09 s, 0.95/1.92 s, 0.64/1.16 s) | **MISSED** (1.56/3.50 s, 0.75/10.27 s) |
+| 4. Mean cost ≤ $0.0004 per live answer | MET ($0.000251, $0.000245, $0.000245) | MET ($0.000244, $0.000249) |
+| 5. Web service agrees with the CLI | MET (10/10 and 5/5 each) | MET (10/10 and 5/5 each) |
+| Burst probe (supplementary): 20 of 20 return 200 | **MISSED** (18/20, 20/20, 19/20) | MET (20/20, 20/20) |
+
+**Only two trials were run for the "after" column.** I stopped the run before trial 3 because I ran out of time (`results/capstone_after/` has trial1 and trial2 only). The "after" column is therefore weaker evidence than the "before" column, and the criteria's own rule of three trials was not met for it.
+
+**Diagnoses**
+
+*Before: the five criteria.* All met, so there is no miss to diagnose. Were the targets too easy? Criteria 1, 2 and 5 are pass-or-fail checks of my own wiring (does the log have 12 records, does a bad request return 400), and they could only fail through a bug, so they were low-risk targets. Criteria 3 and 4 had real room to fail, and criterion 3 did fail after the change. If I rewrote them I would tighten criterion 4 to $0.0003 (the measured mean is about $0.000247, so $0.0004 left about 60% headroom), judge criterion 3 over more than 10 requests (one slow call decides a 10-request maximum), and add a rate-limit case to criterion 2, because the failure I actually hit was not one I had written a criterion for.
+
+*Before: the burst probe (missed).* The probe sent 20 live requests back to back and 2 and 1 of them failed in trials 1 and 3. The stage is the rate limiter in `generate.py::_wait_for_slot`, and the mechanism is a wrong setting. `config.py` allowed `REQUESTS_PER_MINUTE = 30`, but the Gemini free tier allows 15 per minute for this model (the 429 body says `limit: 15`). A burst of more than 15 therefore outran the real limit. The retry in `generate.py::generate` then waits 1, 2, 4 and 8 seconds (15 s in total) while the API asked for about 27 s, so it gave up with `Still rate limited after 4 attempts`, and `serve.py::ask` returned a `500`. Trial 2 passed 20/20 only by luck of timing, and even it had one request that took 38 s.
+
+*After: criterion 3 (missed in both trials). I did not establish the cause.* Trial 1 warm latencies in ms were `[1512, 1606, 1678, 3457, 540, 1092, 3238, 3497, 849, 566]`; trial 2 had one 10,270 ms request among otherwise 600 to 1,100 ms ones. This test makes only 11 calls, below the new limit of 14, in a clean quota window, so the limiter should not have slept. That points away from my change, but I did not capture the service's stderr, so I cannot rule out a 429 retry inside the API call (a 10 s outlier is about the size of one retry round), and I did not re-run to separate my change from ordinary API slowness. I am reporting the miss and the open question, not a mechanism.
+
+**The Improvement**
+
+*One change:* in `config.py`, `REQUESTS_PER_MINUTE` from 30 to 14 (the real limit of 15 minus one call of margin). One number and a comment. I did not add any retry or timeout code, which keeps it inside what `generate.py` already did, though it does move toward the hardening I listed as out of scope in Milestone 1, and I want that on the record. The fix follows the diagnosis above: the limiter let the service exceed its provider's quota.
+
+*Before and after, side by side* (supplementary burst probe: 20 live requests back to back; `results/capstone_before/trial*/probe.json` and `results/capstone_after/trial*/result.json`):
+
+| Run | 200s before | 200s after | Median latency before | Median after | Slowest before | Slowest after |
+|---|---|---|---|---|---|---|
+| 1 | 18/20 | 20/20 | 1.03 s | 2.97 s | 15.5 s | 10.9 s |
+| 2 | 20/20 | 20/20 | 1.04 s | 1.43 s | 38.4 s | 41.4 s |
+| 3 | 19/20 | (not run) | 1.05 s | (not run) | 15.4 s | (not run) |
+
+*Did it help?* Partly, and the evidence is thin. The `500` errors in a burst went from 3 failed requests over 3 trials to none over 2 trials, which is what the fix was aimed at. The trade is that the same burst is slower for the person waiting: the median burst latency rose (1.03 s to 2.97 s in trial 1, 1.04 s to 1.43 s in trial 2) and the slowest request was still 41 s in trial 2, because the limiter now makes requests wait for the window to slide instead of failing quickly. A slow answer is better than an error, but this is a real cost and not a pure win. Two further cautions: the "before" probe passed 20/20 once by luck of timing, so two clean "after" trials do not prove much, and criterion 3 was missed after the change for a reason I did not establish.
+
+**What's Still Broken**
+
+- Criterion 3 is missed in the "after" run and I do not know why. Next I would capture the service's stderr during the criterion 3 requests and log the number of retries per request in the log record, so a slow request can be tied to a 429 retry or ruled out. I stopped because I ran out of time.
+- The log cannot tell an empty body, a whitespace-only question and a non-JSON body apart; all three log `"no question in request"`.
+- The "after" run has two trials, not three.
+- The 15-per-minute limit is hard-coded in `config.py`. If the quota changes, the service breaks the same way again. The better fix is to read the `retryDelay` out of the 429 and wait for it.
+- The 14 limit is per process. Two servers sharing one key would still exceed 15.
+
+**What I'd Do Differently**
+
+- Capture stderr and a retry count from the start. The two slow-request mysteries (criterion 3 after the fix, the 38 s request before it) are about the same thing, and the instrumentation I built cannot see it.
+- Write a rate-limit case into criterion 2 before running anything. I had read the setting in `config.py` and not checked it against the provider's real limit.
+- Check, before the first full run, whether the harness reuses folders. I lost a run to that: the service appends to its log, and a re-run in the same folders re-read the old records (see below).
+
+**A mistake in my own testing**
+
+My first attempt at the "before" burst probe accidentally re-ran all five criteria into `results/capstone_before/`. Because the service appends to its log file and the harness reused the same folders, criteria 1 to 4 re-read the first run's records, so that re-run produced no new data for them. I restored every log file in that folder to its first-run contents (checking timestamps), and made the harness refuse to reuse a folder that already holds logs. The five-criteria results in this README are from the first, clean run. The `result.json` files in `capstone_before/` were rewritten by the mistaken re-run, but for criteria 1 to 4 they hold the same content.

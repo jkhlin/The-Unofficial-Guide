@@ -1,9 +1,11 @@
 {
   "c1": {
-    "met": true,
+    "met": false,
     "value": "12/12",
-    "records": 12,
-    "problems": [],
+    "records": 24,
+    "problems": [
+      "12 extra record(s)"
+    ],
     "evidence": [
       {
         "ts": "2026-11-18T06:42:26.914+00:00",
@@ -582,6 +584,237 @@
         "model_calls": 1,
         "prompt_tokens": 352,
         "output_tokens": 44,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:15.483+00:00",
+        "request_id": "a5df6267",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 2321.2,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 22,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:16.850+00:00",
+        "request_id": "97657eca",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 1354.3,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 22,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:18.212+00:00",
+        "request_id": "3295bd16",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 1354.8,
+        "answer": "The workload for CS 340 is 6 hours a week early on, increasing to 15 hours a week during the last three weeks when the project lands (from `course_cs_340_workload.txt`). It is front-loaded, meaning the first month is heavier than the rest partly due to learning the format (from `course_cs_340_workload.txt`).",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 87,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:19.240+00:00",
+        "request_id": "17f464d2",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 1014.1,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. The rooms are doubles arranged as pairs sharing one bathroom between two rooms, and the building has no air conditioning. \n\nSource: `housing_innisfree_hall.txt`",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 58,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:19.979+00:00",
+        "request_id": "f504b0ee",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 723.8,
+        "answer": "Based on the provided documents, The Atrium has genuinely good sandwiches, which are available in grab-and-go refrigerated cases. \n\nSources:\n- `dining_the_atrium.txt`\n- `dining_the_atrium_followup.txt`",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 57,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:21.028+00:00",
+        "request_id": "13549988",
+        "route": "/ask",
+        "status": 200,
+        "question": "How many on campus jobs are there?",
+        "latency_ms": 1033.5,
+        "answer": "Based on the provided documents, there is no mention of the total number of on-campus jobs available (money_jobs.txt and admin_campus_jobs_and_financial_aid.txt). Therefore, I don't have enough information to answer your question.",
+        "refused": false,
+        "best_distance": 0.4956,
+        "sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 352,
+        "output_tokens": 55,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:21.717+00:00",
+        "request_id": "663b86b1",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 662.5,
+        "answer": "Applications for the study abroad program open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 24,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:23.555+00:00",
+        "request_id": "38375253",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 1820.6,
+        "answer": "The workload for CS 340 is 6 hours a week early on, increasing to 15 hours a week in the last three weeks when the project lands. It is front-loaded, meaning the first month is heavier than the rest, partly because you are learning the format. \n\nSources: `course_cs_340_workload.txt`",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 77,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:24.634+00:00",
+        "request_id": "b0f7c93f",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 1059.1,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. The rooms are doubles arranged as pairs that share one bathroom between two rooms, and the building lacks air conditioning. \n\n*(Source: housing_innisfree_hall.txt)*",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 58,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:25.965+00:00",
+        "request_id": "142e78b8",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 1321.8,
+        "answer": "The Atrium has genuinely good sandwiches, which are part of a sandwich-plus-drink combination or available \u00e0 la carte in grab-and-go refrigerated cases. \n\nSources: `dining_the_atrium.txt` and `dining_the_atrium_followup.txt`",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 61,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T07:06:27.428+00:00",
+        "request_id": "52d483c8",
+        "route": "/ask",
+        "status": 200,
+        "question": "How many on campus jobs are there?",
+        "latency_ms": 1446.3,
+        "answer": "Based on the provided documents, there is no information stating the total number of on-campus jobs. \n\nSource: `money_jobs.txt` and `admin_campus_jobs_and_financial_aid.txt` (insufficient information)",
+        "refused": false,
+        "best_distance": 0.4956,
+        "sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 352,
+        "output_tokens": 52,
         "error": null
       }
     ]

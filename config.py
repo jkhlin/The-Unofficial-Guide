@@ -65,7 +65,11 @@ MODEL = os.getenv("AI201_MODEL", "gemini-3.5-flash-lite")
 # You should not need to touch these. They exist so that a runaway loop costs
 # you a warning instead of your whole day's allowance.
 
-REQUESTS_PER_MINUTE = 30       # outgoing calls the limiter will allow per minute
+# The Gemini free tier allows 15 model calls per minute per project (a 429 says
+# so: "limit: 15"). The starter value was 30, so a burst could outrun the real
+# limit and fail with a 500. 14 leaves one call of margin for clock drift
+# between this limiter's window and Google's.
+REQUESTS_PER_MINUTE = 14       # outgoing calls the limiter will allow per minute
 SESSION_REQUEST_BUDGET = 300   # stop and warn rather than draining the daily quota
 MAX_RETRIES = 4                # on 429 / resource-exhausted, with backoff
 
