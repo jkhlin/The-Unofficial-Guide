@@ -1,0 +1,955 @@
+{
+  "c1": {
+    "met": true,
+    "value": "12/12",
+    "records": 12,
+    "problems": [],
+    "evidence": [
+      {
+        "ts": "2026-11-18T06:42:26.914+00:00",
+        "request_id": "2e388c5a",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 2906.4,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 22,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:28.203+00:00",
+        "request_id": "d4f7791a",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 1262.3,
+        "answer": "The workload for CS 340 requires 6 hours a week early on, increasing to 15 hours a week during the last three weeks when the project lands, and it is front-loaded with the first month being heavier than the rest. \n\nSource: `course_cs_340_workload.txt`",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 69,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:29.363+00:00",
+        "request_id": "22d50b07",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 1161.6,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. It features double rooms arranged as pairs that share one bathroom between two rooms, but it lacks air conditioning. \n\nSource: `housing_innisfree_hall.txt`",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 57,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.124+00:00",
+        "request_id": "18aef779",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 750.2,
+        "answer": "Based on the documents, The Atrium has genuinely good sandwiches in grab-and-go refrigerated cases (source: *dining_the_atrium.txt*).",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 34,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.234+00:00",
+        "request_id": "48e50991",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 79.1,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": true,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.396+00:00",
+        "request_id": "07979eff",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 138.9,
+        "answer": "The workload for CS 340 requires 6 hours a week early on, increasing to 15 hours a week during the last three weeks when the project lands, and it is front-loaded with the first month being heavier than the rest. \n\nSource: `course_cs_340_workload.txt`",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": true,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.451+00:00",
+        "request_id": "04f42e77",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 52.2,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. It features double rooms arranged as pairs that share one bathroom between two rooms, but it lacks air conditioning. \n\nSource: `housing_innisfree_hall.txt`",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": true,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.527+00:00",
+        "request_id": "4207cf3c",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is the capital of Mongolia?",
+        "latency_ms": 56.4,
+        "answer": "I don't have enough information about that.",
+        "refused": true,
+        "best_distance": 0.8246,
+        "sources": [],
+        "cache_hit": false,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.586+00:00",
+        "request_id": "80779290",
+        "route": "/ask",
+        "status": 200,
+        "question": "How do I change the oil in a diesel engine?",
+        "latency_ms": 55.4,
+        "answer": "I don't have enough information about that.",
+        "refused": true,
+        "best_distance": 0.934,
+        "sources": [],
+        "cache_hit": false,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.643+00:00",
+        "request_id": "4a4112d2",
+        "route": "/ask",
+        "status": 200,
+        "question": "Who won the 1994 World Cup?",
+        "latency_ms": 54.2,
+        "answer": "I don't have enough information about that.",
+        "refused": true,
+        "best_distance": 0.8859,
+        "sources": [],
+        "cache_hit": false,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:42:30.647+00:00",
+        "request_id": "afb31b8e",
+        "route": "/ask",
+        "status": 400,
+        "question": "",
+        "latency_ms": 0.1,
+        "answer": null,
+        "refused": null,
+        "best_distance": null,
+        "sources": [],
+        "cache_hit": null,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": "no question in request"
+      },
+      {
+        "ts": "2026-11-18T06:42:30.649+00:00",
+        "request_id": "c5471c4e",
+        "route": "/ask",
+        "status": 400,
+        "question": "",
+        "latency_ms": 0.1,
+        "answer": null,
+        "refused": null,
+        "best_distance": null,
+        "sources": [],
+        "cache_hit": null,
+        "model_calls": 0,
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "error": "no question in request"
+      }
+    ]
+  },
+  "c2": {
+    "met": true,
+    "value": "4/4",
+    "problems": [],
+    "evidence": [
+      {
+        "case": "empty JSON body",
+        "http_status": 400,
+        "follow_up_status": 200,
+        "log_record": {
+          "ts": "2026-11-18T06:43:39.158+00:00",
+          "request_id": "5db72a14",
+          "route": "/ask",
+          "status": 400,
+          "question": "",
+          "latency_ms": 0.1,
+          "answer": null,
+          "refused": null,
+          "best_distance": null,
+          "sources": [],
+          "cache_hit": null,
+          "model_calls": 0,
+          "prompt_tokens": 0,
+          "output_tokens": 0,
+          "error": "no question in request"
+        }
+      },
+      {
+        "case": "whitespace-only question",
+        "http_status": 400,
+        "follow_up_status": 200,
+        "log_record": {
+          "ts": "2026-11-18T06:43:41.410+00:00",
+          "request_id": "2443491f",
+          "route": "/ask",
+          "status": 400,
+          "question": "",
+          "latency_ms": 0.3,
+          "answer": null,
+          "refused": null,
+          "best_distance": null,
+          "sources": [],
+          "cache_hit": null,
+          "model_calls": 0,
+          "prompt_tokens": 0,
+          "output_tokens": 0,
+          "error": "no question in request"
+        }
+      },
+      {
+        "case": "body is not JSON",
+        "http_status": 400,
+        "follow_up_status": 200,
+        "log_record": {
+          "ts": "2026-11-18T06:43:41.500+00:00",
+          "request_id": "4ce7d779",
+          "route": "/ask",
+          "status": 400,
+          "question": "",
+          "latency_ms": 0.1,
+          "answer": null,
+          "refused": null,
+          "best_distance": null,
+          "sources": [],
+          "cache_hit": null,
+          "model_calls": 0,
+          "prompt_tokens": 0,
+          "output_tokens": 0,
+          "error": "no question in request"
+        }
+      },
+      {
+        "case": "model call fails (nonexistent model)",
+        "http_status": 500,
+        "follow_up_status": 200,
+        "log_record": {
+          "ts": "2026-11-18T06:43:43.795+00:00",
+          "request_id": "b8ea526c",
+          "route": "/ask",
+          "status": 500,
+          "question": "How is the workload in CS 340?",
+          "latency_ms": 2231.7,
+          "answer": null,
+          "refused": null,
+          "best_distance": null,
+          "sources": [],
+          "cache_hit": null,
+          "model_calls": null,
+          "prompt_tokens": null,
+          "output_tokens": null,
+          "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-does-not-exist is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}"
+        }
+      }
+    ]
+  },
+  "c3": {
+    "met": true,
+    "value": "median 0.79s / max 1.09s",
+    "median_ms": 791.2,
+    "max_ms": 1085.4,
+    "cold_ms": 2324.0,
+    "latencies_ms": [
+      520.4,
+      875.1,
+      797.5,
+      993.7,
+      595.1,
+      847.1,
+      784.9,
+      1085.4,
+      646.9,
+      569.6
+    ],
+    "evidence": [
+      {
+        "ts": "2026-11-18T06:45:15.681+00:00",
+        "request_id": "b940e6b5",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 2324.0,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 22,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:16.233+00:00",
+        "request_id": "53df70c0",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 520.4,
+        "answer": "Applications for the study abroad program open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 24,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:17.120+00:00",
+        "request_id": "c990f7a7",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 875.1,
+        "answer": "The workload for CS 340 is 6 hours a week early on, and 15 hours a week in the last three weeks when the project lands. It is front-loaded, meaning the first month is heavier than the rest. \n\nSources: `course_cs_340_workload.txt`",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 68,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:17.927+00:00",
+        "request_id": "7dc011b2",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 797.5,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. It features double rooms arranged as pairs that share one bathroom between two rooms, and it does not have air conditioning. \n\n*(Source: housing_innisfree_hall.txt)*",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 59,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:18.925+00:00",
+        "request_id": "1071db8f",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 993.7,
+        "answer": "The Atrium has genuinely good sandwiches, which come in grab-and-go refrigerated cases. \n\nSources: `dining_the_atrium.txt` and `dining_the_atrium_followup.txt`",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 47,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:19.533+00:00",
+        "request_id": "938f0d04",
+        "route": "/ask",
+        "status": 200,
+        "question": "How many on campus jobs are there?",
+        "latency_ms": 595.1,
+        "answer": "Based on the provided documents, there is no mention of the total number of on-campus jobs available. \n\nSource: `money_jobs.txt` and `admin_campus_jobs_and_financial_aid.txt`",
+        "refused": false,
+        "best_distance": 0.4956,
+        "sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 352,
+        "output_tokens": 48,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:20.383+00:00",
+        "request_id": "e74bbc29",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 847.1,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 22,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:21.169+00:00",
+        "request_id": "9d9b9536",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 784.9,
+        "answer": "The workload for CS 340 is 6 hours a week early on, increasing to 15 hours a week during the last three weeks when the project lands (from `course_cs_340_workload.txt`). It is front-loaded, meaning the first month is heavier than the rest partly because you are learning the format (from `course_cs_340_workload.txt`).",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 88,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:22.262+00:00",
+        "request_id": "682e553a",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 1085.4,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. The rooms are doubles arranged as pairs that share one bathroom between two rooms, but the building lacks air conditioning. (Source: housing_innisfree_hall.txt)",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 56,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:22.923+00:00",
+        "request_id": "c1bfdd20",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 646.9,
+        "answer": "The Atrium has genuinely good sandwiches, which are part of a sandwich-plus-drink combination or available \u00e0 la carte in grab-and-go refrigerated cases. \n\nSources: `dining_the_atrium.txt` and `dining_the_atrium_followup.txt`",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 61,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:23.508+00:00",
+        "request_id": "1d52c7c9",
+        "route": "/ask",
+        "status": 200,
+        "question": "How many on campus jobs are there?",
+        "latency_ms": 569.6,
+        "answer": "I do not have enough information in the provided documents to answer how many on-campus jobs there are. \n\nSource: money_jobs.txt, admin_campus_jobs_and_financial_aid.txt",
+        "refused": false,
+        "best_distance": 0.4956,
+        "sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 352,
+        "output_tokens": 44,
+        "error": null
+      }
+    ]
+  },
+  "c4": {
+    "met": true,
+    "value": "$0.000251 mean",
+    "mean_cost": 0.00025087,
+    "bad_token_requests": [],
+    "mean_tokens_in": 405.4,
+    "mean_tokens_out": 51.7,
+    "evidence": [
+      {
+        "ts": "2026-11-18T06:45:16.233+00:00",
+        "request_id": "53df70c0",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 520.4,
+        "answer": "Applications for the study abroad program open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 24,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:17.120+00:00",
+        "request_id": "c990f7a7",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 875.1,
+        "answer": "The workload for CS 340 is 6 hours a week early on, and 15 hours a week in the last three weeks when the project lands. It is front-loaded, meaning the first month is heavier than the rest. \n\nSources: `course_cs_340_workload.txt`",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 68,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:17.927+00:00",
+        "request_id": "7dc011b2",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 797.5,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. It features double rooms arranged as pairs that share one bathroom between two rooms, and it does not have air conditioning. \n\n*(Source: housing_innisfree_hall.txt)*",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 59,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:18.925+00:00",
+        "request_id": "1071db8f",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 993.7,
+        "answer": "The Atrium has genuinely good sandwiches, which come in grab-and-go refrigerated cases. \n\nSources: `dining_the_atrium.txt` and `dining_the_atrium_followup.txt`",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 47,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:19.533+00:00",
+        "request_id": "938f0d04",
+        "route": "/ask",
+        "status": 200,
+        "question": "How many on campus jobs are there?",
+        "latency_ms": 595.1,
+        "answer": "Based on the provided documents, there is no mention of the total number of on-campus jobs available. \n\nSource: `money_jobs.txt` and `admin_campus_jobs_and_financial_aid.txt`",
+        "refused": false,
+        "best_distance": 0.4956,
+        "sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 352,
+        "output_tokens": 48,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:20.383+00:00",
+        "request_id": "e74bbc29",
+        "route": "/ask",
+        "status": 200,
+        "question": "When does study abroad programs start?",
+        "latency_ms": 847.1,
+        "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).",
+        "refused": false,
+        "best_distance": 0.3165,
+        "sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 383,
+        "output_tokens": 22,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:21.169+00:00",
+        "request_id": "9d9b9536",
+        "route": "/ask",
+        "status": 200,
+        "question": "How is the workload in CS 340?",
+        "latency_ms": 784.9,
+        "answer": "The workload for CS 340 is 6 hours a week early on, increasing to 15 hours a week during the last three weeks when the project lands (from `course_cs_340_workload.txt`). It is front-loaded, meaning the first month is heavier than the rest partly because you are learning the format (from `course_cs_340_workload.txt`).",
+        "refused": false,
+        "best_distance": 0.2547,
+        "sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 360,
+        "output_tokens": 88,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:22.262+00:00",
+        "request_id": "682e553a",
+        "route": "/ask",
+        "status": 200,
+        "question": "What is Innisfree Hall condition like?",
+        "latency_ms": 1085.4,
+        "answer": "Innisfree Hall was built in 1991 and renovated in 2022. The rooms are doubles arranged as pairs that share one bathroom between two rooms, but the building lacks air conditioning. (Source: housing_innisfree_hall.txt)",
+        "refused": false,
+        "best_distance": 0.4858,
+        "sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 449,
+        "output_tokens": 56,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:22.923+00:00",
+        "request_id": "c1bfdd20",
+        "route": "/ask",
+        "status": 200,
+        "question": "What food does The Atrium have?",
+        "latency_ms": 646.9,
+        "answer": "The Atrium has genuinely good sandwiches, which are part of a sandwich-plus-drink combination or available \u00e0 la carte in grab-and-go refrigerated cases. \n\nSources: `dining_the_atrium.txt` and `dining_the_atrium_followup.txt`",
+        "refused": false,
+        "best_distance": 0.5615,
+        "sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 483,
+        "output_tokens": 61,
+        "error": null
+      },
+      {
+        "ts": "2026-11-18T06:45:23.508+00:00",
+        "request_id": "1d52c7c9",
+        "route": "/ask",
+        "status": 200,
+        "question": "How many on campus jobs are there?",
+        "latency_ms": 569.6,
+        "answer": "I do not have enough information in the provided documents to answer how many on-campus jobs there are. \n\nSource: money_jobs.txt, admin_campus_jobs_and_financial_aid.txt",
+        "refused": false,
+        "best_distance": 0.4956,
+        "sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "cache_hit": false,
+        "model_calls": 1,
+        "prompt_tokens": 352,
+        "output_tokens": 44,
+        "error": null
+      }
+    ]
+  },
+  "c5": {
+    "met": true,
+    "value": "10/10 & 5/5",
+    "evidence": [
+      {
+        "question": "When does study abroad programs start?",
+        "web_refused": false,
+        "cli_refused": false,
+        "web_sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "web_error": null,
+        "cli_sources": [
+          "admin_add_drop_deadline.txt",
+          "admin_study_abroad.txt",
+          "course_cs_340.txt"
+        ],
+        "same_decision": true,
+        "same_sources": true
+      },
+      {
+        "question": "How is the workload in CS 340?",
+        "web_refused": false,
+        "cli_refused": false,
+        "web_sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "web_error": null,
+        "cli_sources": [
+          "course_cs_210_workload.txt",
+          "course_cs_340_exams.txt",
+          "course_cs_340_workload.txt"
+        ],
+        "same_decision": true,
+        "same_sources": true
+      },
+      {
+        "question": "What is Innisfree Hall condition like?",
+        "web_refused": false,
+        "cli_refused": false,
+        "web_sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "web_error": null,
+        "cli_sources": [
+          "housing_innisfree_hall.txt",
+          "housing_innisfree_hall_laundry.txt",
+          "housing_innisfree_hall_noise.txt"
+        ],
+        "same_decision": true,
+        "same_sources": true
+      },
+      {
+        "question": "What food does The Atrium have?",
+        "web_refused": false,
+        "cli_refused": false,
+        "web_sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "web_error": null,
+        "cli_sources": [
+          "dining_the_atrium.txt",
+          "dining_the_atrium_followup.txt",
+          "dining_verrill_street_grill.txt"
+        ],
+        "same_decision": true,
+        "same_sources": true
+      },
+      {
+        "question": "How many on campus jobs are there?",
+        "web_refused": false,
+        "cli_refused": false,
+        "web_sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "web_error": null,
+        "cli_sources": [
+          "admin_campus_jobs_and_financial_aid.txt",
+          "admin_wifi_and_accounts.txt",
+          "money_jobs.txt"
+        ],
+        "same_decision": true,
+        "same_sources": true
+      },
+      {
+        "question": "What is the capital of Mongolia?",
+        "web_refused": true,
+        "cli_refused": true,
+        "web_sources": [],
+        "web_error": null,
+        "cli_sources": null,
+        "same_decision": true,
+        "same_sources": null
+      },
+      {
+        "question": "How do I change the oil in a diesel engine?",
+        "web_refused": true,
+        "cli_refused": true,
+        "web_sources": [],
+        "web_error": null,
+        "cli_sources": null,
+        "same_decision": true,
+        "same_sources": null
+      },
+      {
+        "question": "Who won the 1994 World Cup?",
+        "web_refused": true,
+        "cli_refused": true,
+        "web_sources": [],
+        "web_error": null,
+        "cli_sources": null,
+        "same_decision": true,
+        "same_sources": null
+      },
+      {
+        "question": "What is the recommended dosage of ibuprofen for a headache?",
+        "web_refused": true,
+        "cli_refused": true,
+        "web_sources": [],
+        "web_error": null,
+        "cli_sources": null,
+        "same_decision": true,
+        "same_sources": null
+      },
+      {
+        "question": "How do I write a for loop in Rust?",
+        "web_refused": true,
+        "cli_refused": true,
+        "web_sources": [],
+        "web_error": null,
+        "cli_sources": null,
+        "same_decision": true,
+        "same_sources": null
+      }
+    ]
+  }
+}

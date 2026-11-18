@@ -70,7 +70,9 @@ SESSION_REQUEST_BUDGET = 300   # stop and warn rather than draining the daily qu
 MAX_RETRIES = 4                # on 429 / resource-exhausted, with backoff
 
 CACHE_ENABLED = os.getenv("AI201_CACHE", "1") != "0"
-CACHE_DIR = ROOT / ".cache"
+# AI201_CACHE_DIR lets a test run use its own empty cache, so "live" requests
+# are really live. Unset, it is the same .cache/ as before.
+CACHE_DIR = Path(os.getenv("AI201_CACHE_DIR", ROOT / ".cache"))
 
 
 # ─── Paths ───────────────────────────────────────────────────────────────────

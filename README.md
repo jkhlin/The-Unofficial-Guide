@@ -515,3 +515,75 @@ What the session shows, from `python summarize_log.py results/m3_instrumentation
 *Cost per run:* about **$0.00023**, or about **$0.23 per 1,000 questions**. That is 405 tokens at $0.30 per million plus 45 tokens at $2.50 per million. The tokens are measured. The two prices are not: I took them from third-party pricing pages, not from Google's own page, so treat the dollar figure as an estimate built on a measured token count. Output tokens are about 10% of the tokens but about half of the cost. Under this course's free tier the actual spend is $0.
 
 A cache hit or a refused question makes no model call, so it costs nothing and its token fields are 0. The $0.00023 applies only to a question that reaches the model.
+
+
+**Capstone Run Log**
+
+Run with `python run_capstone.py --label before --trials 3` (harness: `run_capstone.py`; targets copied from `criteria.md`, which was committed before any trial). Everything the run produced is in `results/capstone_before/`, including each trial's own service logs and `run_log.md`. Before the official run I did one throwaway trial to debug the harness itself. Its output was deleted and is not counted.
+
+Each trial starts new `python serve.py` processes with a new empty log and a new empty cache, so nothing carries over between trials or between criteria. Because the Gemini free tier allows only 15 model calls per minute, the harness waits 65 s between criteria. That keeps each criterion's result about my service and not about the previous criterion using up the quota.
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Every request leaves one complete, consistent log record | 12 of 12 records correct | 12/12 | 12/12 | 12/12 | MET |
+| 2. Bad input / failing model: clean error, a record, service stays up | 4 of 4 handled | 4/4 | 4/4 | 4/4 | MET |
+| 3. Warm live latency | median ≤ 1.2 s and max ≤ 2.5 s | 0.79 s / 1.09 s | 0.95 s / 1.92 s | 0.64 s / 1.16 s | MET |
+| 4. Cost per live answer, from the log | mean ≤ $0.0004, no request at 0 or over 1,500 tokens | $0.000251 | $0.000245 | $0.000245 | MET |
+| 5. Web service agrees with the CLI | 10/10 decisions and 5/5 sources | 10/10 and 5/5 | 10/10 and 5/5 | 10/10 and 5/5 | MET |
+
+All five criteria were met in all three trials. Criterion 3 in trial 2 came closest to missing (slowest warm request 1.92 s against the 2.5 s limit).
+
+*Am I really re-running?* Yes. In every trial all 10 warm requests in criteria 3 and 4 were live model calls (`model_calls = 1`, `cache_hit = false`, 30 of 30), and the latency and cost numbers differ from trial to trial. The input-token counts repeat exactly because I send the same five prompts each time, and the output tokens (which the model chooses) are what move the cost.
+
+*Evidence from trial 1.* Each block is raw output, unedited, from `results/capstone_before/trial1/`.
+
+**Criterion 1.** One record of each class from `c1_log.jsonl` (live, cached, refused, rejected), written by `instrument.py::write_record` and called from `serve.py::ask`. The file holds all 12 records. The harness check is `run_capstone.py::criterion_1`.
+
+```json
+{"ts": "2026-11-18T06:42:26.914+00:00", "request_id": "2e388c5a", "route": "/ask", "status": 200, "question": "When does study abroad programs start?", "latency_ms": 2906.4, "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).", "refused": false, "best_distance": 0.3165, "sources": ["admin_add_drop_deadline.txt", "admin_study_abroad.txt", "course_cs_340.txt"], "cache_hit": false, "model_calls": 1, "prompt_tokens": 383, "output_tokens": 22, "error": null}
+{"ts": "2026-11-18T06:42:30.234+00:00", "request_id": "48e50991", "route": "/ask", "status": 200, "question": "When does study abroad programs start?", "latency_ms": 79.1, "answer": "Applications for study abroad open in October for the following academic year (admin_study_abroad.txt).", "refused": false, "best_distance": 0.3165, "sources": ["admin_add_drop_deadline.txt", "admin_study_abroad.txt", "course_cs_340.txt"], "cache_hit": true, "model_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "error": null}
+{"ts": "2026-11-18T06:42:30.527+00:00", "request_id": "4207cf3c", "route": "/ask", "status": 200, "question": "What is the capital of Mongolia?", "latency_ms": 56.4, "answer": "I don't have enough information about that.", "refused": true, "best_distance": 0.8246, "sources": [], "cache_hit": false, "model_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "error": null}
+{"ts": "2026-11-18T06:42:30.647+00:00", "request_id": "afb31b8e", "route": "/ask", "status": 400, "question": "", "latency_ms": 0.1, "answer": null, "refused": null, "best_distance": null, "sources": [], "cache_hit": null, "model_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "error": "no question in request"}
+```
+
+**Criterion 2.** The four failures, with the HTTP status the client got, the status of the follow-up request, and the status in the log record. `serve.py::ask` produced the responses and `instrument.py::write_record` the log lines below; the harness check is `run_capstone.py::criterion_2`.
+
+| Failure | HTTP status | Follow-up request | Status in log |
+|---|---|---|---|
+| empty JSON body | 400 | 200 | 400 |
+| whitespace-only question | 400 | 200 | 400 |
+| body is not JSON | 400 | 200 | 400 |
+| model call fails (nonexistent model) | 500 | 200 | 500 |
+
+```json
+{"ts": "2026-11-18T06:43:39.158+00:00", "request_id": "5db72a14", "route": "/ask", "status": 400, "question": "", "latency_ms": 0.1, "answer": null, "refused": null, "best_distance": null, "sources": [], "cache_hit": null, "model_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "error": "no question in request"}
+{"ts": "2026-11-18T06:43:41.410+00:00", "request_id": "2443491f", "route": "/ask", "status": 400, "question": "", "latency_ms": 0.3, "answer": null, "refused": null, "best_distance": null, "sources": [], "cache_hit": null, "model_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "error": "no question in request"}
+{"ts": "2026-11-18T06:43:41.500+00:00", "request_id": "4ce7d779", "route": "/ask", "status": 400, "question": "", "latency_ms": 0.1, "answer": null, "refused": null, "best_distance": null, "sources": [], "cache_hit": null, "model_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "error": "no question in request"}
+{"ts": "2026-11-18T06:43:43.795+00:00", "request_id": "b8ea526c", "route": "/ask", "status": 500, "question": "How is the workload in CS 340?", "latency_ms": 2231.7, "answer": null, "refused": null, "best_distance": null, "sources": [], "cache_hit": null, "model_calls": null, "prompt_tokens": null, "output_tokens": null, "error": "ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-does-not-exist is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}"}
+```
+
+**Criterion 3.** Latencies of the 10 warm live requests in ms, from the `latency_ms` field written by `serve.py::ask`: `[520.4, 875.1, 797.5, 993.7, 595.1, 847.1, 784.9, 1085.4, 646.9, 569.6]`. Median 791 ms, maximum 1085 ms. The cold request that was discarded took 2324 ms. Two of the raw records:
+
+```json
+{"ts": "2026-11-18T06:45:16.233+00:00", "request_id": "53df70c0", "route": "/ask", "status": 200, "question": "When does study abroad programs start?", "latency_ms": 520.4, "answer": "Applications for the study abroad program open in October for the following academic year (admin_study_abroad.txt).", "refused": false, "best_distance": 0.3165, "sources": ["admin_add_drop_deadline.txt", "admin_study_abroad.txt", "course_cs_340.txt"], "cache_hit": false, "model_calls": 1, "prompt_tokens": 383, "output_tokens": 24, "error": null}
+{"ts": "2026-11-18T06:45:17.120+00:00", "request_id": "c990f7a7", "route": "/ask", "status": 200, "question": "How is the workload in CS 340?", "latency_ms": 875.1, "answer": "The workload for CS 340 is 6 hours a week early on, and 15 hours a week in the last three weeks when the project lands. It is front-loaded, meaning the first month is heavier than the rest. \n\nSources: `course_cs_340_workload.txt`", "refused": false, "best_distance": 0.2547, "sources": ["course_cs_210_workload.txt", "course_cs_340_exams.txt", "course_cs_340_workload.txt"], "cache_hit": false, "model_calls": 1, "prompt_tokens": 360, "output_tokens": 68, "error": null}
+```
+
+**Criterion 4.** Computed by `run_capstone.py::criterion_3_and_4` from the same 10 log records. Input tokens `[383, 360, 449, 483, 352, 383, 360, 449, 483, 352]`, output tokens `[24, 68, 59, 47, 48, 22, 88, 56, 61, 44]`. At $0.30 and $2.50 per million that is a mean of $0.000251 per live answer; no request had 0 tokens or more than 1,500.
+
+**Criterion 5.** The ten questions through `POST /ask` (`serve.py::ask`) and through `python app.py ask` (`app.py::cmd_ask`), compared by `run_capstone.py::criterion_5`. Sources are the web service's; the CLI printed the same set for every answered question.
+
+| Question | Web | CLI | Sources | Same sources? |
+|---|---|---|---|---|
+| When does study abroad programs start? | answered | answered | admin_add_drop_deadline.txt, admin_study_abroad.txt, course_cs_340.txt | same |
+| How is the workload in CS 340? | answered | answered | course_cs_210_workload.txt, course_cs_340_exams.txt, course_cs_340_workload.txt | same |
+| What is Innisfree Hall condition like? | answered | answered | housing_innisfree_hall.txt, housing_innisfree_hall_laundry.txt, housing_innisfree_hall_noise.txt | same |
+| What food does The Atrium have? | answered | answered | dining_the_atrium.txt, dining_the_atrium_followup.txt, dining_verrill_street_grill.txt | same |
+| How many on campus jobs are there? | answered | answered | admin_campus_jobs_and_financial_aid.txt, admin_wifi_and_accounts.txt, money_jobs.txt | same |
+| What is the capital of Mongolia? | refused | refused | - | - |
+| How do I change the oil in a diesel engine? | refused | refused | - | - |
+| Who won the 1994 World Cup? | refused | refused | - | - |
+| What is the recommended dosage of ibuprofen for a headache? | refused | refused | - | - |
+| How do I write a for loop in Rust? | refused | refused | - | - |
+
+**What this run does not cover.** The pacing means the 15-per-minute API limit was never hit during the official trials. In the throwaway trial, where I did not pace, it was hit: the service answered `500` with `Still rate limited after 4 attempts`, because `config.py` allows 30 calls per minute while the free tier allows 15 and the retries wait only 15 s in total. I did not write a criterion for that, so it is a finding and not a verdict. Also, the empty body, whitespace-only question and non-JSON body all return `400` with the same log line (`"no question in request"`), so the log cannot tell them apart.

@@ -28,3 +28,6 @@ Thumbs.db
 
 # Live request log written by serve.py (a curated run record is committed separately)
 logs/requests.jsonl
+
+# Per-trial model caches made by run_capstone.py (logs and result.json in the same folders are kept)
+results/*/*/*_cache/
